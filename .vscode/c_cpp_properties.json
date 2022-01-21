@@ -1,0 +1,39 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/src/**",
+                "${workspaceFolder}/src/stl"
+            ],
+            "defines": [
+                "__KERNEL_MODE_=1"
+            ],
+            "compilerPath": "/bin/cpp",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerArgs": [
+                "-nostdlib"
+            ]
+        },
+        {
+            "name": "SlavDogOS",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "__KERNEL_MODE_"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerArgs": [
+                "-m32",
+                "-nostdlib"
+            ]
+        }
+    ],
+    "version": 4
+}
