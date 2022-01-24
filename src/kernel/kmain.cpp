@@ -8,15 +8,15 @@
 #include "memory.h"
 #include "screen.h"
 
-extern "C" void kmain() {
+char ae[100];
 
+extern "C" void kmain() {
     kout << "Starting OS\n";
 
-    initialize();
+    heapInit();
     gdtInit();
     idtInit();
     initFat16();
-
 
     while (true)
     {

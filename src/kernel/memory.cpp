@@ -1,11 +1,19 @@
 #include "memory.h"
 
 #define HEAP_SIZE 0x100000
-char memory[2];// = {1};
-#define MB(x)   ((size_t) (x) << 20)
-size_t alloced = 0;
-void* allocPtr = (void*)MB(0x20);
+// for some reason initializing this to 0 causes problems
+char memory[HEAP_SIZE] = {1};
+
+char* ptr;
+
+uint32_t totalAlloced = 0;
+
 struct block *freeList = (block*)memory;
+
+void heapInit() {
+    memset((uint8_t*)memory, 0, HEAP_SIZE);
+    ptr = memory;
+}
 
 void initialize() {
     freeList->size = HEAP_SIZE - sizeof(block);
@@ -25,13 +33,24 @@ void split(struct block *fitting_slot, size_t size) {
 
 
 void *kmalloc(size_t noOfBytes) {
-    void* p = allocPtr;
-    *(size_t*) &allocPtr += noOfBytes;
-    return p; 
-    alloced += noOfBytes;
+
+    char* last = ptr;
+    ptr += noOfBytes+1;
+
+
+    if (ptr >= memory + HEAP_SIZE + noOfBytes + 1) {
+        kout << "Insuficient memory\n";
+        asm ("cli \n hlt");
+    }
+
+
+    return last;
+
+    totalAlloced += noOfBytes;
+
     block *curr,*prev;
     void *result;
-    if(!freeList->size){
+    if(freeList->size == 0){
         initialize();
     }
     curr = freeList;
@@ -53,8 +72,7 @@ void *kmalloc(size_t noOfBytes) {
     }
     else {
         result = nullptr;
-        kout << "HEAP ERROR: Insuficent Memory\n";
-        kout << "Bytes Allocated: " << hex << "0x" << (uint32_t)alloced << '\n';
+        kout << "HEAP ERROR: Insuficent Memory\n" << "Bytes alloced: " << totalAlloced;
         asm ("cli   \n hlt");
         return result;
     }
@@ -63,7 +81,7 @@ void *kmalloc(size_t noOfBytes) {
 void merge(){
  struct block *curr,*prev;
  curr=freeList;
- while((curr->next)!=NULL){
+ while((curr->next) && curr){
   if((curr->free) && (curr->next->free)){
    curr->size+=(curr->next->size)+sizeof(struct block);
    curr->next=curr->next->next;

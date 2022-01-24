@@ -20,8 +20,10 @@
 #define FAT16_CLUSTER_LAST_MIN       0xfff8
 #define FAT16_CLUSTER_LAST_MAX       0xffff
 #define LFN_ATTR                     0x0F
+#define CLUSTER_BYTES                (SECTOR_SIZE * SEC_PER_CLUSTER)
 
-#define FAT_DIRENTRY_DELETED         0xe5
+
+#define FAT_DIRENTRY_DELETED         0xE5
 #define FAT_DIRENTRY_LFNLAST         (1 << 6)
 #define FAT_DIRENTRY_LFNSEQMASK      ((1 << 6) - 1)
 
@@ -100,29 +102,47 @@ struct fat_data {
 	uint32_t    firstDataSec;
 	uint8_t     secPerCluster;
 	uint32_t    firstRootDirSec;
+	uint32_t    firstFatSec;
 	uint32_t    rootDirSecCount;
 	uint32_t    fatSize;
 };
 
 struct fat_file_handle {
 	uint16_t clusterNum;
+	uint32_t size;
+	char name[8];
+	char ext[3];
+
 };
 
 #define FHANDLE void*
 
-inline void readBootSec(char* ptr) {
+inline static void readBootSec(char* ptr) {
     read_sectors_ATA_PIO((uint32_t)ptr, START_SECTOR, 1);
+}
+
+inline static uint32_t sizeToCluster(uint32_t sz) {
+	const uint32_t clusterSz = SEC_PER_CLUSTER * SECTOR_SIZE;
+	// rounds up value to the nearest cluster size
+    sz += clusterSz;
+    sz /= clusterSz;
+	return sz;
 }
 
 char* readAllFile(fat_file_t* fp);
 void* readCluster(uint32_t sectorNum, char* buf);
 bool isValidFile(fat_file_t* fp);
+fat_file_t* findFileInDir(fat_file_t* fp, std::string name);
 fat_file_t* readFileInfo(uint32_t sector, const char* buf);
 uint32_t clusterToSector(uint16_t clusterNum);
 void initFatData(fat_BS* fbs);
 std::string fatToCStr(const char* fatName, bool dir);
 bool isDir(fat_file_t* fp);
-FHANDLE fatopen(std::string path);
+
+void fatClose(FHANDLE file);
+FHANDLE fatOpen(std::string path);
+void fatFileRead(FHANDLE file, char* buf, uint32_t sz);
+uint32_t fatFileSize(FHANDLE file);
 void initFat16();
 
 #endif

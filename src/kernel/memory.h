@@ -10,6 +10,7 @@ struct block {
     struct block *next;  
 };
 
+void heapInit();
 
 void initialize();
 

@@ -1,11 +1,15 @@
 #include "functions.h"
 
 // Copy len bytes from src to dest.
-void memcpy(void *dest, const void *src, uint32_t len)
+void memcpy(void *_dest, const void *_src, uint32_t len)
 {
-    const uint8_t *sp = (const uint8_t *)src;
-    uint8_t *dp = (uint8_t *)dest;
-    for(; len != 0; len--) *dp++ = *sp++;
+    char* dest = (char*)_dest;
+    char* src = (char*)_src;
+    for (uint32_t i = 0; i < len; i++) {
+        *dest = *src;
+        dest++;
+        src++;
+    }
 }
 
 // Write len copies of val into dest.
