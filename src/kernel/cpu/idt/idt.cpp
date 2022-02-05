@@ -7,6 +7,8 @@ void idt_set_gate(uint8_t,uint32_t,uint16_t,uint8_t);
 
 extern "C" void idt_flush(uint32_t);
 
+ 
+
 void idtInit()
 {
     idt_ptr.limit = sizeof(idt_entry_t) * 256 -1;
@@ -74,6 +76,7 @@ void idtInit()
     idt_set_gate(45, (uint32_t)irq13, 0x08, 0x8E);
     idt_set_gate(46, (uint32_t)irq14, 0x08, 0x8E);
     idt_set_gate(47, (uint32_t)irq15, 0x08, 0x8E);
+    idt_set_gate(48, (uint32_t)irq16, 0x08, 0x8E);
 
 
    idt_flush((uint32_t)&idt_ptr);

@@ -1,3 +1,4 @@
+// lowest level disk driver, do not use directly unless for a filesystem driver
 #include "diskATA.h"
 
 #define StatusRegister 0x1F7
@@ -34,8 +35,7 @@
 
 static void ATA_wait_BSY();
 static void ATA_wait_DRQ();
-bool dbg = false;
-int a = 0;
+
 void read_sectors_ATA_PIO(uint32_t target_address, uint32_t LBA, uint8_t sector_count)
 	{
 

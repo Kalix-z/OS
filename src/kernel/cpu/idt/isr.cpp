@@ -5,10 +5,12 @@ isr_t interrupt_handlers[256];
 extern "C" void isr_handler(registers_t regs)
 {
     kout << "recieved interrupt: " << (int)regs.int_no << '\n';
+    kout << "instruction pointer: " << hex << regs.eip;
 }
 
 extern "C" void irq_handler(registers_t regs)
 {
+
    // Send an EOI (end of interrupt) signal to the PICs.
    // If this interrupt involved the slave.
    if (regs.int_no >= 40)

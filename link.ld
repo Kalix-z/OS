@@ -16,6 +16,7 @@ INPUT
     bin/idtasm.o
     bin/functions.o
     bin/isr.o
+    bin/filesystem.o
     bin/fat16.o
     bin/memory.o
     bin/diskATA.o
